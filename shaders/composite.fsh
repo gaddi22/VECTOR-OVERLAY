@@ -355,5 +355,11 @@ void main() {
 		}
 	#endif
 
-	gl_FragData[0] = vec4(color, 1.0);
+	//place the original scene back in place
+	vec3 sceneColor = texture2D(colortex0, uv).rgb; // Sample the original scene color
+
+	//merge vector shader and normal minecraft
+	vec3 finalColor = mix(sceneColor, color, line); // 'line' is where edges are detected
+
+	gl_FragData[0] = vec4(finalColor, 1.0);
 }
