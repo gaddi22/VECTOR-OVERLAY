@@ -25,9 +25,11 @@ void main() {
 	#ifdef GBUFFERS_SKYTEXTURED
 	discard;
 	#endif
-	vec3 color = textureLod(gtexture, mid_uv, 3.0).rgb;
+	// vec3 color = textureLod(gtexture, mid_uv, 3.0).rgb;
+	vec3 color = texture(gtexture, uv).rgb;
 	vec3 normal = texture(normals, uv).xyz;
 	float alpha = texture(gtexture, uv).a;
+
 
 	normal = normal * 2.0 - 1.0;
 	normal = tbn * normal;
@@ -38,11 +40,6 @@ void main() {
 	color *= vertex_color;
 	#endif
 	if (alpha < alphaTestRef) discard;
-
-	#if defined GBUFFERS_WATER && defined SEE_THROUGH_GLASS
-	if(blockID == 1004 || blockID == 1005) discard; // Stained glass + tinted glass
-	#endif
-
 
 	#ifdef GBUFFERS_SKYBASIC
 	color = vec3(0.5);
@@ -58,6 +55,6 @@ void main() {
 		entity = entityMask == 3 ? 0.3 : entity; // Players
 	#endif
 
-	gl_FragData[0] = vec4(color, 1.0);
+	gl_FragData[0] = vec4(color, alpha);
 	gl_FragData[1] = vec4(normal, entity);
 }
