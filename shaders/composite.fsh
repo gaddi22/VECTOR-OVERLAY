@@ -37,6 +37,8 @@ uniform float aspectRatio;
 
 const float edge_kernel[9] = float[](-1.0, -1.0, -1.0, -1.0, 8.0, -1.0, -1.0, -1.0, -1.0);
 
+uniform sampler2D lightmap; // Declares the light map texture
+
 // Choc version
 float linearizeDepth(float dist) {
     return (2.0 * near) / (far + near - dist * (far - near));
@@ -357,9 +359,17 @@ void main() {
 
 	//place the original scene back in place
 	vec3 sceneColor = texture2D(colortex0, uv).rgb; // Sample the original scene color
+	//Apply light and gamma
+	// float maxLightLevel = max(lightLevel.x,lightLevel.y);
+	// sceneColor *= maxLightLevel;
+
+	// sceneColor *= 0.5;
+
+	vec3 lightMapColor = texture2D(lightmap, uv).rgb;
+	sceneColor *= lightMapColor;
 
 	//merge vector shader and normal minecraft
-	vec3 finalColor = mix(sceneColor, color, line); // 'line' is where edges are detected
+	vec3 finalColor = mix(sceneColor, color, line);
 
 	gl_FragData[0] = vec4(finalColor, 1.0);
 }
